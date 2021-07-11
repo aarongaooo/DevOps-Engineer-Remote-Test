@@ -34,7 +34,7 @@ def submit():
     else:
         return render_template('index.html', message="Please submit a text file.")
     
-    params = {'apikey': '7ca2e1b0bf6b4d50dbe4ea1fc5685656177c2b9f61e8590330ce1cb8a3e37e86'}
+    params = {'apikey': 'fb902c15f19f2c20d1d25013ed6f94f4181bafd26252687fa9608396d60dbd03'}
     url = 'https://www.virustotal.com/vtapi/v2/file/scan'
 
     files = {'file': ("sample.txt", open("../backend/files/"+"sample.txt", 'rb'))}
@@ -76,15 +76,16 @@ def report():
     resource = resource[:-1]
     print(resource)
 
-    params = {'apikey': '7ca2e1b0bf6b4d50dbe4ea1fc5685656177c2b9f61e8590330ce1cb8a3e37e86', 'resource': resource}
+    params = {'apikey': 'fb902c15f19f2c20d1d25013ed6f94f4181bafd26252687fa9608396d60dbd03', 'resource': resource}
     url = 'https://www.virustotal.com/vtapi/v2/file/report'
     responses = requests.get(url, params=params)
     i=0
+
     json_response = responses.json()
+
     if type(json_response) !=list:
         json_response = [json_response]
     for json_response in json_response:
-        # if (json_response["response_code"] == 1):
         report.append(json_response)
         resource = json_response["resource"]
         newRecord = {
@@ -93,15 +94,11 @@ def report():
             "time" : datetime.strftime(datetime.now(), "%m/%d/%y, %H:%M:%S")
         }
         data.append(newRecord)
-            
-    print(len(report))
-
-
 
     jsonString = json.dumps(data)
     jsonFile = open("data.json", "w")
     jsonFile.write(jsonString)
-    jsonFile.save(os.path.join("../backend/data.json", "sample.txt"))
+
     jsonFile.close()
 
     return render_template('reports.html', report= report, count = count) 
